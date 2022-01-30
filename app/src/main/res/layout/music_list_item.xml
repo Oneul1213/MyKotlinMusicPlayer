@@ -19,17 +19,27 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="@id/image_view_album_art"
-        app:layout_constraintBottom_toTopOf="@id/text_view_singer"
+        app:layout_constraintBottom_toTopOf="@id/text_view_artist"
         app:layout_constraintLeft_toRightOf="@id/image_view_album_art"
         app:layout_constraintRight_toRightOf="parent"
         />
 
     <TextView
-        android:id="@+id/text_view_singer"
+        android:id="@+id/text_view_artist"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/text_view_music_title"
-        app:layout_constraintBottom_toBottomOf="@id/image_view_album_art"
+        app:layout_constraintBottom_toTopOf="@id/text_view_duration"
+        app:layout_constraintLeft_toRightOf="@id/image_view_album_art"
+        app:layout_constraintRight_toRightOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/text_view_duration"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/text_view_artist"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/image_view_album_art"
         app:layout_constraintRight_toRightOf="parent"
         />
