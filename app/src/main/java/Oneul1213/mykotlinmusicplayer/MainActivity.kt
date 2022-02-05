@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
             applicationContext,
             path,
             null,
-            MediaScannerConnection.OnScanCompletedListener {path, uri ->
+            MediaScannerConnection.OnScanCompletedListener { path, uri ->
                 Log.i("onScanCompleted", "$path is scanned")
             }
         )
