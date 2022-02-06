@@ -41,6 +41,7 @@ class MusicListAdapter() : RecyclerView.Adapter<MusicListAdapter.ViewHolder>() {
                 val context = binding.root.context
                 val playActivityIntent = Intent(context, PlayActivity::class.java)
 
+                playActivityIntent.putExtra("musicUri", this.musicUri)
                 playActivityIntent.putExtra("albumUri", this.albumUri)
                 playActivityIntent.putExtra("title", this.title)
                 playActivityIntent.putExtra("artist", this.artist)
