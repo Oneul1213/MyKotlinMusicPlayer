@@ -2,14 +2,13 @@ package Oneul1213.mykotlinmusicplayer
 
 import Oneul1213.mykotlinmusicplayer.databinding.ActivityPlayBinding
 import android.app.Service
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
+import android.content.*
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -24,8 +23,10 @@ class PlayActivity : AppCompatActivity() {
     var title: String? = null
     var artist: String? = null
     var duration: String? = null
+    var position: Int? = null
 
     var isPlayingMusic = true
+    var jobMusicPlayService: Job? = null
 
     var musicPlayService: MusicPlayService? = null
     var isService = false
@@ -41,25 +42,41 @@ class PlayActivity : AppCompatActivity() {
         }
     }
 
+    val musicResultBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            // MainActivity에서 가져온 이전/다음 곡 정보로 Activity 설정
+            getIntentExtras(intent)
+            setViews()
+            jobMusicPlayService?.cancel()
+            jobMusicPlayService = CoroutineScope(Dispatchers.Default).launch {
+                // 음악 정보로 서비스 실행
+                val musicPlayServiceIntent = Intent(this@PlayActivity, MusicPlayService::class.java)
+
+                musicPlayServiceIntent.action = MusicPlayService.ACTION_MUSIC_PLAY
+                musicPlayServiceIntent.putExtra("musicUri", this@PlayActivity.musicUri)
+
+                Log.d("PAonReceive", "Received")
+                startService(musicPlayServiceIntent)
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        // LocalBroadcastReceiver 등록
+        val intentFilter = IntentFilter().apply { addAction(MusicPlayService.ACTION_MUSIC_RESULT) }
+        LocalBroadcastManager.getInstance(this).registerReceiver(musicResultBroadcastReceiver, intentFilter)
+
         // intent에서 값 받아오기
-        this.musicUri = intent.getParcelableExtra("musicUri")
-        this.albumUri = intent.getParcelableExtra("albumUri")
-        this.title = intent.getStringExtra("title")
-        this.artist = intent.getStringExtra("artist")
-        this.duration = intent.getStringExtra("duration")
+        getIntentExtras(intent)
 
         // 음악 정보 설정
-        binding.imageViewAlbumArtPlay.setImageURI(this.albumUri)
-        binding.textViewMusicTitlePlay.text = this.title
-        binding.textViewArtistPlay.text = this.artist
-        binding.textViewDurationPlay.text = "00:00 / ${this.duration}"
+        setViews()
 
         // 코루틴에서 MusicPlayService 실행
-        CoroutineScope(Dispatchers.Default).launch {
+        jobMusicPlayService = CoroutineScope(Dispatchers.Default).launch {
             val musicPlayServiceIntent = Intent(this@PlayActivity, MusicPlayService::class.java)
 
             musicPlayServiceIntent.action = MusicPlayService.ACTION_MUSIC_PLAY
@@ -98,11 +115,39 @@ class PlayActivity : AppCompatActivity() {
         }
 
         binding.imageViewNextPlay.setOnClickListener {
-
+            // position과 action_next를 담은 broadcast 송신
+            val nextMusicIntent = Intent(MusicPlayService.ACTION_NEXT_MUSIC)
+            nextMusicIntent.putExtra("position", position)
+            LocalBroadcastManager.getInstance(this).sendBroadcast(nextMusicIntent)
         }
 
         binding.imageViewPreviousPlay.setOnClickListener {
-
+            // position과 action_previous를 담은 broadcast 송신
+            val previousMusicIntent = Intent(MusicPlayService.ACTION_PREVIOUS_MUSIC)
+            previousMusicIntent.putExtra("position", position)
+            LocalBroadcastManager.getInstance(this).sendBroadcast(previousMusicIntent)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(musicResultBroadcastReceiver)
+        jobMusicPlayService?.cancel()
+    }
+
+    private fun getIntentExtras(intent: Intent?) {
+        this.musicUri = intent?.getParcelableExtra("musicUri")
+        this.albumUri = intent?.getParcelableExtra("albumUri")
+        this.title = intent?.getStringExtra("title")
+        this.artist = intent?.getStringExtra("artist")
+        this.duration = intent?.getStringExtra("duration")
+        this.position = intent?.getIntExtra("position", 0)
+    }
+
+    private fun setViews() {
+        binding.imageViewAlbumArtPlay.setImageURI(this.albumUri)
+        binding.textViewMusicTitlePlay.text = this.title
+        binding.textViewArtistPlay.text = this.artist
+        binding.textViewDurationPlay.text = "00:00 / ${this.duration}"
     }
 }

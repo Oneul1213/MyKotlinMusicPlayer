@@ -24,7 +24,7 @@ class MusicListAdapter() : RecyclerView.Adapter<MusicListAdapter.ViewHolder>() {
     override fun getItemCount(): Int  = musicList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.setMusic(musicList[position])
+        holder.setMusic(musicList[position], position)
     }
 
     inner class ViewHolder(val binding: MusicListItemBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -34,6 +34,7 @@ class MusicListAdapter() : RecyclerView.Adapter<MusicListAdapter.ViewHolder>() {
         var title: String? = null
         var artist: String? = null
         var duration: String? = null
+        var position: Int? = null
 
         init {
             // 음악 목록의 음악을 클릭했을 때
@@ -46,12 +47,13 @@ class MusicListAdapter() : RecyclerView.Adapter<MusicListAdapter.ViewHolder>() {
                 playActivityIntent.putExtra("title", this.title)
                 playActivityIntent.putExtra("artist", this.artist)
                 playActivityIntent.putExtra("duration", this.duration)
+                playActivityIntent.putExtra("position", this.position)
 
                 context.startActivity(playActivityIntent)
             }
         }
 
-        fun setMusic(item: MusicListItem) {
+        fun setMusic(item: MusicListItem, position: Int) {
             binding.run {
                 imageViewAlbumArt.setImageURI(item.getAlbumUri())
                 textViewMusicTitle.text = item.title
@@ -66,6 +68,7 @@ class MusicListAdapter() : RecyclerView.Adapter<MusicListAdapter.ViewHolder>() {
             this.title = item.title
             this.artist = item.artist
             this.duration = SimpleDateFormat("mm:ss").format(item.duration)
+            this.position = position
         }
     }
 }

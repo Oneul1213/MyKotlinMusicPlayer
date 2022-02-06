@@ -18,6 +18,7 @@ class MusicPlayService : Service() {
         val ACTION_MUSIC_PAUSE = "Oneul1213.mykotlinmusicplayer.MUSIC_PAUSE"
         val ACTION_PREVIOUS_MUSIC = "Oneul1213.mykotlinmusicplayer.PREVIOUS_MUSIC"
         val ACTION_NEXT_MUSIC = "Oneul1213.mykotlinmusicplayer.NEXT_MUSIC"
+        val ACTION_MUSIC_RESULT = "Oneul1213.mykotlinmusicplayer.MUSIC_RESULT"
     }
 
     inner class MusicPlayServiceBinder: Binder() {
@@ -48,6 +49,8 @@ class MusicPlayService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        musicPlayer?.release()
+        musicPlayer = null
     }
 
     private fun initMusicPlayer() {
@@ -71,13 +74,5 @@ class MusicPlayService : Service() {
 
     fun pauseMusic() {
         musicPlayer?.pause()
-    }
-
-    fun nextMusic() {
-
-    }
-
-    fun previousMusic() {
-
     }
 }
