@@ -50,8 +50,7 @@ class MainActivity : AppCompatActivity() {
                         putExtra("albumUri", nextMusic.getAlbumUri())
                         putExtra("title", nextMusic.title)
                         putExtra("artist", nextMusic.artist)
-                        val duration = SimpleDateFormat("mm:ss").format(nextMusic.duration)
-                        putExtra("duration", duration)
+                        putExtra("duration", nextMusic.duration)
                         putExtra("position", nextPosition)
                     }
                     // playActivity로 보냄
@@ -74,8 +73,7 @@ class MainActivity : AppCompatActivity() {
                         putExtra("albumUri", previousMusic.getAlbumUri())
                         putExtra("title", previousMusic.title)
                         putExtra("artist", previousMusic.artist)
-                        val duration = SimpleDateFormat("mm:ss").format(previousMusic.duration)
-                        putExtra("duration", duration)
+                        putExtra("duration", previousMusic.duration)
                         putExtra("position", previousPosition)
                     }
                     // playActivity로 보냄

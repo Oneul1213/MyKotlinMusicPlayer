@@ -33,7 +33,7 @@ class MusicListAdapter() : RecyclerView.Adapter<MusicListAdapter.ViewHolder>() {
         var albumUri: Uri? = null
         var title: String? = null
         var artist: String? = null
-        var duration: String? = null
+        var duration: Long? = null
         var position: Int? = null
 
         init {
@@ -60,14 +60,14 @@ class MusicListAdapter() : RecyclerView.Adapter<MusicListAdapter.ViewHolder>() {
                 textViewArtist.text = item.artist
 
                 val duration = SimpleDateFormat("mm:ss").format(item.duration)
-                textViewDuration.text = duration
+                textViewDuration.text = "00:00 / $duration"
             }
 
             this.musicUri = item.getMusicUri()
             this.albumUri = item.getAlbumUri()
             this.title = item.title
             this.artist = item.artist
-            this.duration = SimpleDateFormat("mm:ss").format(item.duration)
+            this.duration = item.duration
             this.position = position
         }
     }

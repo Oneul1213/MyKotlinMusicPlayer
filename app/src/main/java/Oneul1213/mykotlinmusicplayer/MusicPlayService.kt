@@ -75,4 +75,16 @@ class MusicPlayService : Service() {
     fun pauseMusic() {
         musicPlayer?.pause()
     }
+
+    fun getCurrentProgress() : Int? {
+        return musicPlayer?.currentPosition
+    }
+
+    fun getDuration() : Int? {
+        return musicPlayer?.duration
+    }
+
+    fun setProgress(mSec: Int) {
+        musicPlayer?.seekTo(mSec)
+    }
 }

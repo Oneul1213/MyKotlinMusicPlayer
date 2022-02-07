@@ -8,11 +8,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import android.widget.SeekBar
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import java.text.SimpleDateFormat
 
 class PlayActivity : AppCompatActivity() {
 
@@ -22,11 +21,12 @@ class PlayActivity : AppCompatActivity() {
     var albumUri: Uri? = null
     var title: String? = null
     var artist: String? = null
-    var duration: String? = null
+    var duration: Long? = null
     var position: Int? = null
 
     var isPlayingMusic = true
     var jobMusicPlayService: Job? = null
+    var jobUpdateSeekBar: Job? = null
 
     var musicPlayService: MusicPlayService? = null
     var isService = false
@@ -35,6 +35,8 @@ class PlayActivity : AppCompatActivity() {
             val binder = service as MusicPlayService.MusicPlayServiceBinder
             musicPlayService = binder.getService()
             isService = true
+
+            initSeekBar()
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -57,6 +59,11 @@ class PlayActivity : AppCompatActivity() {
 
                 Log.d("PAonReceive", "Received")
                 startService(musicPlayServiceIntent)
+
+                // 서비스 바인드
+                val bindServiceIntent = Intent(this@PlayActivity, MusicPlayService::class.java)
+                unbindService(connection)
+                bindService(bindServiceIntent, connection, Context.BIND_AUTO_CREATE)
             }
         }
     }
@@ -87,6 +94,10 @@ class PlayActivity : AppCompatActivity() {
 
         // 서비스 바인드
         val bindServiceIntent = Intent(this, MusicPlayService::class.java)
+        if (isService) {
+            unbindService(connection)
+            isService = false
+        }
         bindService(bindServiceIntent, connection, Context.BIND_AUTO_CREATE)
 
         // clickListener 설정
@@ -127,6 +138,52 @@ class PlayActivity : AppCompatActivity() {
             previousMusicIntent.putExtra("position", position)
             LocalBroadcastManager.getInstance(this).sendBroadcast(previousMusicIntent)
         }
+
+        // SeekBar 초기화
+        val seekBar = binding.seekBarPlay
+//        seekBar.max = musicPlayService?.getDuration() ?: 100
+//        seekBar.progress = 0
+
+        // SeekBar 1초마다 업데이트
+        jobUpdateSeekBar = CoroutineScope(Dispatchers.Default).launch {
+            while (true) {
+                Thread.sleep(1000)
+                if (isService && isPlayingMusic) {
+                    val currentPosition = musicPlayService?.getCurrentProgress()
+//                    val min = current_position?.let { it / (1000 * 60) }
+//                    val sec = current_position?.let { it % (1000 * 60) }
+                    val currentPositionString = SimpleDateFormat("mm:ss").format(currentPosition)
+                    currentPosition?.let {
+                        seekBar.incrementProgressBy(1000)
+                    }
+
+                    withContext(Dispatchers.Main) {
+                        val duration = SimpleDateFormat("mm:ss").format(duration)
+                        binding.textViewDurationPlay.text = "$currentPositionString / $duration"
+                    }
+                }
+            }
+        }
+
+        // SeekBar 드래그 설정
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (isService && fromUser) {
+                    musicPlayService?.setProgress(progress)
+                    val currentPositionString = SimpleDateFormat("mm:ss").format(progress)
+                    val duration = SimpleDateFormat("mm:ss").format(duration)
+                    binding.textViewDurationPlay.text = "$currentPositionString / $duration"
+                }
+            }
+
+            override fun onStartTrackingTouch(p0: SeekBar?) {
+
+            }
+
+            override fun onStopTrackingTouch(p0: SeekBar?) {
+
+            }
+        })
     }
 
     override fun onDestroy() {
@@ -140,7 +197,7 @@ class PlayActivity : AppCompatActivity() {
         this.albumUri = intent?.getParcelableExtra("albumUri")
         this.title = intent?.getStringExtra("title")
         this.artist = intent?.getStringExtra("artist")
-        this.duration = intent?.getStringExtra("duration")
+        this.duration = intent?.getLongExtra("duration", 0)
         this.position = intent?.getIntExtra("position", 0)
     }
 
@@ -148,6 +205,14 @@ class PlayActivity : AppCompatActivity() {
         binding.imageViewAlbumArtPlay.setImageURI(this.albumUri)
         binding.textViewMusicTitlePlay.text = this.title
         binding.textViewArtistPlay.text = this.artist
-        binding.textViewDurationPlay.text = "00:00 / ${this.duration}"
+        val duration = SimpleDateFormat("mm:ss").format(this.duration)
+        binding.textViewDurationPlay.text = "00:00 / $duration"
+    }
+
+    private fun initSeekBar() {
+        this.duration?.let {
+            binding.seekBarPlay.max = it.toInt()
+        }
+        binding.seekBarPlay.progress = 0
     }
 }
