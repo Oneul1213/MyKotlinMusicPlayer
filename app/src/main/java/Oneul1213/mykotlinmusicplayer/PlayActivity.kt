@@ -126,6 +126,10 @@ class PlayActivity : AppCompatActivity() {
         }
 
         binding.imageViewNextPlay.setOnClickListener {
+            // 다음 곡 버튼을 누르면 다음 곡이 자동 재생
+            isPlayingMusic = true
+            binding.imageViewTogglePlay.setImageResource(R.drawable.icon_pause)
+
             // position과 action_next를 담은 broadcast 송신
             val nextMusicIntent = Intent(MusicPlayService.ACTION_NEXT_MUSIC)
             nextMusicIntent.putExtra("position", position)
@@ -133,6 +137,10 @@ class PlayActivity : AppCompatActivity() {
         }
 
         binding.imageViewPreviousPlay.setOnClickListener {
+            // 이전 곡 버튼을 누르면 이전 곡이 자동 재생
+            isPlayingMusic = true
+            binding.imageViewTogglePlay.setImageResource(R.drawable.icon_pause)
+
             // position과 action_previous를 담은 broadcast 송신
             val previousMusicIntent = Intent(MusicPlayService.ACTION_PREVIOUS_MUSIC)
             previousMusicIntent.putExtra("position", position)
