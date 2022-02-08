@@ -60,7 +60,7 @@ class MusicListAdapter() : RecyclerView.Adapter<MusicListAdapter.ViewHolder>() {
                 textViewArtist.text = item.artist
 
                 val duration = SimpleDateFormat("mm:ss").format(item.duration)
-                textViewDuration.text = "00:00 / $duration"
+                textViewDuration.text = duration
             }
 
             this.musicUri = item.getMusicUri()
