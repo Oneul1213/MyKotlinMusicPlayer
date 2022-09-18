@@ -12,7 +12,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/text_view_music_title"
-        android:contentDescription="AlbumArt"/>
+        android:contentDescription="@string/album_art_content_description"/>
 
     <TextView
         android:id="@+id/text_view_music_title"

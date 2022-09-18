@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">MyKotlinMusicPlayer</string>
+    <string name="album_art_content_description">AlbumArt</string>
+    <string name="previous_button_content_description">PreviousButton</string>
+    <string name="toggle_play_button_content_description">TogglePlayButton</string>
+    <string name="next_button_content_description">NextButton</string>
 </resources>
