@@ -29,18 +29,18 @@ class PlayActivity : AppCompatActivity() {
     var jobUpdateSeekBar: Job? = null
 
     var musicPlayService: MusicPlayService? = null
-    var isService = false
+    var isServiceBind = false
     val connection = object: ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            val binder = service as MusicPlayService.MusicPlayServiceBinder
+        override fun onServiceConnected(name: ComponentName?, serviceBinder: IBinder?) {
+            val binder = serviceBinder as MusicPlayService.MusicPlayServiceBinder
             musicPlayService = binder.getService()
-            isService = true
+            isServiceBind = true
 
             initSeekBar()
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            isService = false
+            isServiceBind = false
         }
     }
 
@@ -83,6 +83,7 @@ class PlayActivity : AppCompatActivity() {
         setViews()
 
         // 코루틴에서 MusicPlayService 실행
+        jobMusicPlayService?.cancel()
         jobMusicPlayService = CoroutineScope(Dispatchers.Default).launch {
             val musicPlayServiceIntent = Intent(this@PlayActivity, MusicPlayService::class.java)
 
@@ -94,9 +95,9 @@ class PlayActivity : AppCompatActivity() {
 
         // 서비스 바인드
         val bindServiceIntent = Intent(this, MusicPlayService::class.java)
-        if (isService) {
+        if (isServiceBind) {
             unbindService(connection)
-            isService = false
+            isServiceBind = false
         }
         bindService(bindServiceIntent, connection, Context.BIND_AUTO_CREATE)
 
@@ -108,7 +109,7 @@ class PlayActivity : AppCompatActivity() {
                     isPlayingMusic = false
                     binding.imageViewTogglePlay.setImageResource(R.drawable.icon_play)
 
-                    if (isService) {
+                    if (isServiceBind) {
                         musicPlayService?.pauseMusic()
                     }
                 }
@@ -118,7 +119,7 @@ class PlayActivity : AppCompatActivity() {
                     isPlayingMusic = true
                     binding.imageViewTogglePlay.setImageResource(R.drawable.icon_pause)
 
-                    if (isService) {
+                    if (isServiceBind) {
                         musicPlayService?.playMusic()
                     }
                 }
@@ -153,10 +154,11 @@ class PlayActivity : AppCompatActivity() {
 //        seekBar.progress = 0
 
         // SeekBar 1초마다 업데이트
+        jobUpdateSeekBar?.cancel()
         jobUpdateSeekBar = CoroutineScope(Dispatchers.Default).launch {
             while (true) {
-                Thread.sleep(1000)
-                if (isService && isPlayingMusic) {
+                delay(1000)
+                if (isServiceBind && isPlayingMusic) {
                     val currentPosition = musicPlayService?.getCurrentProgress()
 //                    val min = current_position?.let { it / (1000 * 60) }
 //                    val sec = current_position?.let { it % (1000 * 60) }
@@ -176,7 +178,7 @@ class PlayActivity : AppCompatActivity() {
         // SeekBar 드래그 설정
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (isService && fromUser) {
+                if (isServiceBind && fromUser) {
                     musicPlayService?.setProgress(progress)
                     val currentPositionString = SimpleDateFormat("mm:ss").format(progress)
                     val duration = SimpleDateFormat("mm:ss").format(duration)
@@ -197,7 +199,7 @@ class PlayActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(musicResultBroadcastReceiver)
-        jobMusicPlayService?.cancel()
+//        jobMusicPlayService?.cancel()
     }
 
     private fun getIntentExtras(intent: Intent?) {
