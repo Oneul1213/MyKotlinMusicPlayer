@@ -12,6 +12,7 @@ import android.widget.SeekBar
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
+import java.util.*
 
 class PlayActivity : AppCompatActivity() {
 
@@ -162,14 +163,14 @@ class PlayActivity : AppCompatActivity() {
                     val currentPosition = musicPlayService?.getCurrentProgress()
 //                    val min = current_position?.let { it / (1000 * 60) }
 //                    val sec = current_position?.let { it % (1000 * 60) }
-                    val currentPositionString = SimpleDateFormat("mm:ss").format(currentPosition)
+                    val currentPositionString = SimpleDateFormat("mm:ss", Locale.getDefault()).format(currentPosition)
                     currentPosition?.let {
                         seekBar.incrementProgressBy(1000)
                     }
 
                     withContext(Dispatchers.Main) {
-                        val duration = SimpleDateFormat("mm:ss").format(duration)
-                        binding.textViewDurationPlay.text = "$currentPositionString / $duration"
+                        val duration = SimpleDateFormat("mm:ss", Locale.getDefault()).format(duration)
+                        binding.textViewDurationPlay.text = getString(R.string.duration_format, currentPositionString, duration)
                     }
                 }
             }
@@ -180,9 +181,9 @@ class PlayActivity : AppCompatActivity() {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (isServiceBind && fromUser) {
                     musicPlayService?.setProgress(progress)
-                    val currentPositionString = SimpleDateFormat("mm:ss").format(progress)
-                    val duration = SimpleDateFormat("mm:ss").format(duration)
-                    binding.textViewDurationPlay.text = "$currentPositionString / $duration"
+                    val currentPositionString = SimpleDateFormat("mm:ss", Locale.getDefault()).format(progress)
+                    val duration = SimpleDateFormat("mm:ss", Locale.getDefault()).format(duration)
+                    binding.textViewDurationPlay.text = getString(R.string.duration_format, currentPositionString, duration)
                 }
             }
 
@@ -215,8 +216,9 @@ class PlayActivity : AppCompatActivity() {
         binding.imageViewAlbumArtPlay.setImageURI(this.albumUri)
         binding.textViewMusicTitlePlay.text = this.title
         binding.textViewArtistPlay.text = this.artist
-        val duration = SimpleDateFormat("mm:ss").format(this.duration)
-        binding.textViewDurationPlay.text = "00:00 / $duration"
+        val duration = SimpleDateFormat("mm:ss", Locale.getDefault()).format(this.duration)
+        val zero = getString(R.string.duration_zero)
+        binding.textViewDurationPlay.text = getString(R.string.duration_format, zero, duration)
     }
 
     private fun initSeekBar() {
