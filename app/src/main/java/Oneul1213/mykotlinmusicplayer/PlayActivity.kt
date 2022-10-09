@@ -107,7 +107,7 @@ class PlayActivity : AppCompatActivity() {
                 // 재생 중에 일시정지를 위해 클릭
                 true -> {
                     isPlayingMusic = false
-                    binding.imageViewTogglePlay.setImageResource(R.drawable.icon_play)
+                    binding.imageViewTogglePlay.setImageResource(R.drawable.ic_play)
 
                     if (isServiceBind) {
                         musicPlayService?.pauseMusic()
@@ -117,7 +117,7 @@ class PlayActivity : AppCompatActivity() {
                 // 일시정지 중에 재생을 위해 클릭
                 false -> {
                     isPlayingMusic = true
-                    binding.imageViewTogglePlay.setImageResource(R.drawable.icon_pause)
+                    binding.imageViewTogglePlay.setImageResource(R.drawable.ic_pause)
 
                     if (isServiceBind) {
                         musicPlayService?.playMusic()
@@ -129,7 +129,7 @@ class PlayActivity : AppCompatActivity() {
         binding.imageViewNextPlay.setOnClickListener {
             // 다음 곡 버튼을 누르면 다음 곡이 자동 재생
             isPlayingMusic = true
-            binding.imageViewTogglePlay.setImageResource(R.drawable.icon_pause)
+            binding.imageViewTogglePlay.setImageResource(R.drawable.ic_pause)
 
             // position과 action_next를 담은 broadcast 송신
             val nextMusicIntent = Intent(MusicPlayService.ACTION_NEXT_MUSIC)
@@ -140,7 +140,7 @@ class PlayActivity : AppCompatActivity() {
         binding.imageViewPreviousPlay.setOnClickListener {
             // 이전 곡 버튼을 누르면 이전 곡이 자동 재생
             isPlayingMusic = true
-            binding.imageViewTogglePlay.setImageResource(R.drawable.icon_pause)
+            binding.imageViewTogglePlay.setImageResource(R.drawable.ic_pause)
 
             // position과 action_previous를 담은 broadcast 송신
             val previousMusicIntent = Intent(MusicPlayService.ACTION_PREVIOUS_MUSIC)

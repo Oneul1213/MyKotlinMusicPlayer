@@ -44,9 +44,9 @@
 
     <ImageView
         android:id="@+id/image_view_previous_play"
-        android:src="@drawable/icon_previous"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        app:srcCompat="@drawable/ic_previous"
         app:layout_constraintTop_toTopOf="@id/image_view_toggle_play"
         app:layout_constraintBottom_toBottomOf="@id/image_view_toggle_play"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -56,9 +56,9 @@
 
     <ImageView
         android:id="@+id/image_view_toggle_play"
-        android:src="@drawable/icon_pause"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        app:srcCompat="@drawable/ic_pause"
         app:layout_constraintTop_toBottomOf="@id/text_view_artist_play"
         app:layout_constraintBottom_toTopOf="@id/seek_bar_play"
         app:layout_constraintLeft_toRightOf="@id/image_view_previous_play"
@@ -68,9 +68,9 @@
 
     <ImageView
         android:id="@+id/image_view_next_play"
-        android:src="@drawable/icon_next"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        app:srcCompat="@drawable/ic_next"
         app:layout_constraintTop_toTopOf="@id/image_view_toggle_play"
         app:layout_constraintBottom_toBottomOf="@id/image_view_toggle_play"
         app:layout_constraintLeft_toRightOf="@id/image_view_toggle_play"

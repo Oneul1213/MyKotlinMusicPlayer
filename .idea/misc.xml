@@ -3,6 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/bbtfl/AndroidStudioProjects/MyKotlinMusicPlayer/app/src/main/res/drawable/ic_next.xml" value="0.321" />
+        <entry key="..\:/Users/bbtfl/AndroidStudioProjects/MyKotlinMusicPlayer/app/src/main/res/drawable/ic_pause.xml" value="0.321" />
+        <entry key="..\:/Users/bbtfl/AndroidStudioProjects/MyKotlinMusicPlayer/app/src/main/res/drawable/ic_play.xml" value="0.321" />
+        <entry key="..\:/Users/bbtfl/AndroidStudioProjects/MyKotlinMusicPlayer/app/src/main/res/drawable/ic_previous.xml" value="0.321" />
         <entry key="..\:/Users/bbtfl/AndroidStudioProjects/MyKotlinMusicPlayer/app/src/main/res/layout/activity_main.xml" value="0.14356884057971014" />
         <entry key="..\:/Users/bbtfl/AndroidStudioProjects/MyKotlinMusicPlayer/app/src/main/res/layout/activity_play.xml" value="0.24947916666666667" />
         <entry key="..\:/Users/bbtfl/AndroidStudioProjects/MyKotlinMusicPlayer/app/src/main/res/layout/music_list_item.xml" value="0.25" />
